@@ -5,12 +5,13 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
+# Manages WebDriver instances based on the specified browser type
 class WebDriverManager:
     def __init__(self, browser):
         if browser == "chrome":
-            self.driver = webdriver.Chrome()  # Chrome WebDriver
+            self.driver = webdriver.Chrome()
         elif browser == "firefox":
-            self.driver = webdriver.Firefox()  # Firefox WebDriver
+            self.driver = webdriver.Firefox()
         else:
             raise ValueError(f"Unsupported browser: {browser}")
 
@@ -23,17 +24,24 @@ class WebDriverManager:
         self.driver.quit()
 
 
-@pytest.fixture(scope="class", params=["chrome", "firefox"])
-def init_webdriver_instance(request: pytest.FixtureRequest):
-    browser = request.param
-    with WebDriverManager(browser) as driver:
+# Fixture to initialize a WebDriver instance for test classes
+@pytest.fixture(scope="class")
+def init_webdriver_instance(request):
+    browser_option = request.config.getoption("--browser")
+    if browser_option:
+        selected_browser = browser_option
+    else:
+        selected_browser = "chrome"  # Default browser is Chrome
+    print(f"Selected browser: {selected_browser}")
+    with WebDriverManager(selected_browser) as driver:
         yield driver
 
 
+# Helper class for waiting for page elements to load
 class PageWait:
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(self.driver, 10)
+        self.wait = WebDriverWait(self.driver, 10)  # Initialize WebDriverWait
 
     def wait_for_page_load(self):
         self.wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
