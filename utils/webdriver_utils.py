@@ -32,7 +32,6 @@ def init_webdriver_instance(request):
         selected_browser = browser_option
     else:
         selected_browser = "chrome"  # Default browser is Chrome
-    print(f"Selected browser: {selected_browser}")
     with WebDriverManager(selected_browser) as driver:
         yield driver
 

@@ -7,6 +7,7 @@ class GoogleSearchPage:
         self.driver = driver
         self.search_box_locator = "textarea[name='q']"
         self.search_button_locator = "input[name='btnK']"
+        self.search_results_links_locator = "//div[@id='search']//h3"
 
     def perform_search(self, query):
         search_box = self.driver.find_element(By.CSS_SELECTOR, self.search_box_locator)
@@ -19,3 +20,14 @@ class GoogleSearchPage:
             By.CSS_SELECTOR, self.search_button_locator
         )
         search_button.click()
+
+    def get_page_title(self):
+        return self.driver.title
+
+    def get_search_results_links_texts(self):
+        return [
+            link.text
+            for link in self.driver.find_elements(
+                By.XPATH, self.search_results_links_locator
+            )
+        ]
